@@ -27,7 +27,6 @@ PORT = 6666
 # server host (default localhost 127.0.0.1)
 HOST = '127.0.0.1'
 
-
 client = Client()
 client.start_connection(HOST, PORT)
 pokemons_str = client.get_pokemons()
@@ -60,26 +59,24 @@ class Arena(RelativeLayout):
         super(Arena, self).__init__(**kwargs)
 
         self.algo = GraphAlgo()
+
         self.agents = []  # List
-        self.pokemons = pokemons_loader(pokemons_str)  # List
-        print(agents_str)
-        self.init_stuf()
+        self.pokemons_obj = pokemons_loader(pokemons_str)  # List of objects
+        self.pokemons = []  # list of ellipse to draw
+        print(pokemons_str)
         self.algo.load_from_json("../../data/A0")
+
         self.k_nodes = []
         self.k_edges = []
+
         self.scale_points()
         self.init_audio()
         self.draw_nodes()
         self.draw_edges()
         self.draw_pokemons()
-        self.draw_agents()
+        # self.draw_agents()
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
-
-    def init_stuf(self):
-        # self.agents = agents_loader(agents_str)  # List
-        # self.pokemons = pokemons_loader(pokemons_str)  # List
-        pass
 
     def init_audio(self):
         self.sound_begin = SoundLoader.load("../../resources/audio/begin.wav")
@@ -105,9 +102,8 @@ class Arena(RelativeLayout):
 
     def draw_nodes(self):
         with self.canvas:
-            # Color(0, 0, 0)
+            Color(1, 1, 1)
             for i in range(0, len(self.algo.graph.nodes)):
-                # self.k_nodes.append(Ellipse(source='../../resources/images/pikachu.gif'))
                 self.k_nodes.append(Ellipse(source='../../resources/images/pokeball.png'))
 
     def draw_edges(self):
@@ -119,10 +115,9 @@ class Arena(RelativeLayout):
     def update_nodes(self):
         self.scale_points()
         for i, node in enumerate(self.algo.graph.nodes.values()):
-            x_scale = (node.pos[0] - self.min_x) * self.unit_x
-            y_scale = (node.pos[1] - self.min_y) * self.unit_y
-
-            self.k_nodes[i].pos = x_scale, y_scale
+            x, y = (node.pos[0] - self.min_x) * self.unit_x, (node.pos[1] - self.min_y) * self.unit_y
+            # print(f'x={x}, y={y}')
+            self.k_nodes[i].pos = x, y
             self.k_nodes[i].size = dp(15), dp(15)
 
     def update_edges(self):
@@ -135,45 +130,49 @@ class Arena(RelativeLayout):
             self.k_edges[i].points = [x1, y1, x2, y2]
 
     def draw_pokemons(self):
+        self.px = self.pokemons_obj[0].pos[0]
+        self.py = self.pokemons_obj[0].pos[1]
         with self.canvas:
             Color(1, 1, 1)
-            for i in range(0, 1):
+            for i in range(0, len(self.pokemons_obj)):
+                # self.pokemons.append(Ellipse())
                 self.pokemons.append(Ellipse(source='../../resources/images/charizard.png'))
 
     def draw_agents(self):
+
         with self.canvas:
             Color(1, 1, 1)
             for i in range(0, 1):
                 self.agents.append(Ellipse(source='../../resources/images/ash2.png'))
 
     def update_pokemons(self):
+        px = self.pokemons_obj[0].pos[0]
+        py = self.pokemons_obj[0].pos[1]
         self.scale_points()
-        for i in range(0, len(self.pokemons)):
-            x, y = randrange(0, self.width), randrange(0, self.height)
-            self.pokemons[i].pos = 400, 300
-            self.pokemons[i].size = dp(100), dp(100)
+        for i in range(0, len(self.pokemons_obj)):
+            px = self.pokemons_obj[i].pos[0]
+            py = self.pokemons_obj[i].pos[1]
+            print(f'x={float(self.pokemons[i].pos[0])}, y={float(self.pokemons[i].pos[1])}')
+            x, y = (px - self.min_x) * self.unit_x, (
+                    py - self.min_y) * self.unit_y
+
+            self.pokemons[i].pos = x, y
+            self.pokemons[i].size = dp(20), dp(20)
 
     def update_agents(self):
         self.scale_points()
         for i in range(0, len(self.agents)):
             x, y = randrange(0, self.width), randrange(0, self.height)
             self.agents[i].pos = 600, 300
-            self.agents[i].size = dp(200), dp(200)
+            self.agents[i].size = dp(50), dp(50)
 
     def update(self, dt):
-        # print(client.time_to_end())
-        # print(client.get_info())
         # time_factor = dt * 60
         self.update_nodes()
         self.update_edges()
-        client.start()
-        # print(agents_str)
-        # print(pokemons_str)
-        # print(self.state_game_has_started)
-        # print(self.state_game_over)
 
         if not self.state_game_over and self.state_game_has_started:
-            self.update_agents()
+            # self.update_agents()
             self.update_pokemons()
             self.t += 1
             self.time_to_end_txt = f"TIME:{str(self.t)}"
@@ -192,7 +191,6 @@ class Arena(RelativeLayout):
             # client.stop_connection()
 
     def on_login_button_pressed(self, name, case):
-        # print("BUTTON")
         self.name_input = name
         self.case_input = case
         print(self.name_input)
@@ -226,5 +224,3 @@ class PokemonApp(App):
 
 if __name__ == '__main__':
     PokemonApp().run()
-
-
