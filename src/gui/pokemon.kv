@@ -1,6 +1,6 @@
-Arena:
+#:import login login
 
-#:set s dp(15)
+Arena:
 
 <Arena>:
     canvas.before:
@@ -8,4 +8,45 @@ Arena:
             size: self.size
             source: '../../resources/images/arena.png'
 
+    login_widget: login_widget
 
+    LoginWidget:
+        id: login_widget
+
+
+    Button:
+        id: stop_button
+        font_size: dp(15)
+        font_name: "../../resources/fonts/Eurostile.ttf"
+        text: "STOP"
+        pos_hint: {"center_x": .95, "center_y": .95}
+        size_hint: .07, .07
+        on_release: root.on_stop_button_pressed()
+        background_normal: ''
+        background_color: .4, .3, 1, .5
+        disabled: True
+
+    # score, time to end (in sec), move counter
+    Label:
+        text: root.time_to_end_txt
+        font_name: "../../resources/fonts/Lcd.ttf"
+        font_size: dp(20)
+        color: 0,0,0,1
+        size_hint: .18, .18
+        pos_hint: {"x": -0.03, "top": 1.06}
+
+    Label:
+        text: root.score_txt
+        font_name: "../../resources/fonts/Lcd.ttf"
+        font_size: dp(20)
+        color: 0,0,0, 1
+        size_hint: .18, .18
+        pos_hint: {"x": 0.06, "top": 1.06}
+
+    Label:
+        text: root.moves_txt
+        font_name: "../../resources/fonts/Lcd.ttf"
+        font_size: dp(20)
+        color: 0,0,0, 1
+        size_hint: .18, .18
+        pos_hint: {"x": .16, "top": 1.06}
