@@ -1,5 +1,5 @@
-from algo.Logic.Node import Node
-from algo.API.GraphInterface import GraphInterface
+from Logic.Node import Node
+from API.GraphInterface import GraphInterface
 
 
 class DiGraph(GraphInterface):
