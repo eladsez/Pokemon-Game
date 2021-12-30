@@ -1,11 +1,11 @@
-from algo.API.GraphAlgoInterface import GraphAlgoInterface
+from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
-from algo.Logic.DiGraph import DiGraph
+from Logic.DiGraph import DiGraph
 from queue import Queue
-from algo.Logic.Node import Node
-from algo.Logic.PriorityQueue import PriorityQueue
+from Logic.Node import Node
+from Logic.PriorityQueue import PriorityQueue
 # from GUI.PlotGraph import PlotView
 
 

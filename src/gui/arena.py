@@ -1,4 +1,3 @@
-import json
 import sys
 from random import randrange
 
@@ -8,23 +7,15 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
 
-from client_python.client import Client
-
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
 
-from kivy import platform
-from kivy.core.window import Window
 from kivy.app import App
-from kivy.graphics import Line, Quad, Triangle, Rectangle, Ellipse
-from kivy.uix.textinput import TextInput
+from kivy.graphics import Line, Ellipse
 from kivy.graphics.context_instructions import Color
-from kivy.properties import NumericProperty, Clock, ObjectProperty, StringProperty
-from kivy.uix.widget import Widget
+from kivy.properties import Clock, StringProperty
 
-from algo.Logic.GraphAlgo import GraphAlgo
-from agent import Agent
-from pokemon import Pokemon
+from Logic.GraphAlgo import GraphAlgo
 
 Builder.load_file('login.kv')
 
@@ -32,6 +23,7 @@ Builder.load_file('login.kv')
 PORT = 6666
 # server host (default localhost 127.0.0.1)
 HOST = '127.0.0.1'
+
 
 # client = Client()
 # client.start_connection(HOST, PORT)
@@ -60,6 +52,7 @@ class Arena(RelativeLayout):
     sound_restart = None
     t = 0
     s = 0
+
     def __init__(self, **kwargs):
         super(Arena, self).__init__(**kwargs)
 
@@ -83,9 +76,9 @@ class Arena(RelativeLayout):
         self.sound_music1 = SoundLoader.load("../../resources/audio/theme.mp3")
         self.sound_restart = SoundLoader.load("../../resources/audio/restart.wav")
 
-        self.sound_begin.volume = .7
-        self.sound_music1.volume = .3
-        self.sound_restart.volume = .6
+        self.sound_begin.volume = .0
+        self.sound_music1.volume = .0
+        self.sound_restart.volume = .0
 
     def scale_points(self):
         self.min_x = self.min_y = sys.float_info.max
@@ -115,13 +108,12 @@ class Arena(RelativeLayout):
 
     def update_nodes(self):
         self.scale_points()
-        for i in range(0, len(self.algo.graph.nodes)):
-            x_scale = (self.algo.graph.nodes[i].pos[0] - self.min_x) * self.unit_x
-            y_scale = (self.algo.graph.nodes[i].pos[1] - self.min_y) * self.unit_y
+        for i, node in enumerate(self.algo.graph.nodes.values()):
+            x_scale = (node.pos[0] - self.min_x) * self.unit_x
+            y_scale = (node.pos[1] - self.min_y) * self.unit_y
 
             self.k_nodes[i].pos = x_scale, y_scale
             self.k_nodes[i].size = dp(15), dp(15)
-
 
     def update_edges(self):
         self.scale_points()
@@ -134,7 +126,7 @@ class Arena(RelativeLayout):
 
     def draw_pokemons(self):
         with self.canvas:
-            Color(1,1,1)
+            Color(1, 1, 1)
             for i in range(0, 1):
                 self.pokemons.append(Ellipse(source='../../resources/images/charizard.png'))
 
@@ -147,21 +139,21 @@ class Arena(RelativeLayout):
     def update_pokemons(self):
         self.scale_points()
         for i in range(0, len(self.pokemons)):
-            x, y = randrange(0, self.width),randrange(0, self.height)
+            x, y = randrange(0, self.width), randrange(0, self.height)
             self.pokemons[i].pos = 400, 300
             self.pokemons[i].size = dp(100), dp(100)
 
     def update_agents(self):
         self.scale_points()
         for i in range(0, len(self.agents)):
-            x, y = randrange(0, self.width),randrange(0, self.height)
+            x, y = randrange(0, self.width), randrange(0, self.height)
             self.agents[i].pos = 600, 300
             self.agents[i].size = dp(200), dp(200)
 
     def update(self, dt):
         # print(client.time_to_end())
         # print(client.get_info())
-        time_factor = dt * 60
+        # time_factor = dt * 60
         self.update_nodes()
         self.update_edges()
         # print(self.state_game_has_started)
@@ -219,4 +211,7 @@ class PokemonApp(App):
     pass
 
 
-PokemonApp().run()
+if __name__ == '__main__':
+    PokemonApp().run()
+
+
