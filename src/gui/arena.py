@@ -7,6 +7,9 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
 
+from client_python.client import Client
+from utilities.json_loader import agents_loader, pokemons_loader
+
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
 
@@ -25,11 +28,11 @@ PORT = 6666
 HOST = '127.0.0.1'
 
 
-# client = Client()
-# client.start_connection(HOST, PORT)
-# pokemons = client.get_pokemons()
-# graph_json = client.get_graph()
-# agents = client.get_agents()
+client = Client()
+client.start_connection(HOST, PORT)
+pokemons_str = client.get_pokemons()
+graph_str = client.get_graph()
+agents_str = client.get_agents()
 
 
 class Arena(RelativeLayout):
@@ -58,7 +61,9 @@ class Arena(RelativeLayout):
 
         self.algo = GraphAlgo()
         self.agents = []  # List
-        self.pokemons = []  # List
+        self.pokemons = pokemons_loader(pokemons_str)  # List
+        print(agents_str)
+        self.init_stuf()
         self.algo.load_from_json("../../data/A0")
         self.k_nodes = []
         self.k_edges = []
@@ -71,14 +76,19 @@ class Arena(RelativeLayout):
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
 
+    def init_stuf(self):
+        # self.agents = agents_loader(agents_str)  # List
+        # self.pokemons = pokemons_loader(pokemons_str)  # List
+        pass
+
     def init_audio(self):
         self.sound_begin = SoundLoader.load("../../resources/audio/begin.wav")
         self.sound_music1 = SoundLoader.load("../../resources/audio/theme.mp3")
         self.sound_restart = SoundLoader.load("../../resources/audio/restart.wav")
 
-        self.sound_begin.volume = .0
-        self.sound_music1.volume = .0
-        self.sound_restart.volume = .0
+        self.sound_begin.volume = .7
+        self.sound_music1.volume = .3
+        self.sound_restart.volume = .6
 
     def scale_points(self):
         self.min_x = self.min_y = sys.float_info.max
@@ -156,6 +166,9 @@ class Arena(RelativeLayout):
         # time_factor = dt * 60
         self.update_nodes()
         self.update_edges()
+        client.start()
+        # print(agents_str)
+        # print(pokemons_str)
         # print(self.state_game_has_started)
         # print(self.state_game_over)
 
