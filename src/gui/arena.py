@@ -10,8 +10,8 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from client_python.client import Client
 
-Config.set('graphics', 'width', '900')
-Config.set('graphics', 'height', '500')
+Config.set('graphics', 'width', '1100')
+Config.set('graphics', 'height', '600')
 
 from kivy import platform
 from kivy.core.window import Window
@@ -102,9 +102,10 @@ class Arena(RelativeLayout):
 
     def draw_nodes(self):
         with self.canvas:
-            Color(0, 0, 0)
+            # Color(0, 0, 0)
             for i in range(0, len(self.algo.graph.nodes)):
-                self.k_nodes.append(Ellipse())
+                # self.k_nodes.append(Ellipse(source='../../resources/images/pikachu.gif'))
+                self.k_nodes.append(Ellipse(source='../../resources/images/pokeball.png'))
 
     def draw_edges(self):
         with self.canvas:
@@ -119,7 +120,8 @@ class Arena(RelativeLayout):
             y_scale = (self.algo.graph.nodes[i].pos[1] - self.min_y) * self.unit_y
 
             self.k_nodes[i].pos = x_scale, y_scale
-            self.k_nodes[i].size = dp(12), dp(12)
+            self.k_nodes[i].size = dp(15), dp(15)
+
 
     def update_edges(self):
         self.scale_points()
@@ -132,29 +134,29 @@ class Arena(RelativeLayout):
 
     def draw_pokemons(self):
         with self.canvas:
-            Color(0, 0, 1)
+            Color(1,1,1)
             for i in range(0, 1):
-                self.pokemons.append(Ellipse())
+                self.pokemons.append(Ellipse(source='../../resources/images/charizard.png'))
 
     def draw_agents(self):
         with self.canvas:
-            Color(1, 0, 0)
+            Color(1, 1, 1)
             for i in range(0, 1):
-                self.agents.append(Ellipse())
+                self.agents.append(Ellipse(source='../../resources/images/ash2.png'))
 
     def update_pokemons(self):
         self.scale_points()
         for i in range(0, len(self.pokemons)):
             x, y = randrange(0, self.width),randrange(0, self.height)
-            self.pokemons[i].pos = x, y
-            self.pokemons[i].size = dp(12), dp(12)
+            self.pokemons[i].pos = 400, 300
+            self.pokemons[i].size = dp(100), dp(100)
 
     def update_agents(self):
         self.scale_points()
         for i in range(0, len(self.agents)):
             x, y = randrange(0, self.width),randrange(0, self.height)
-            self.agents[i].pos = x, y
-            self.agents[i].size = dp(12), dp(12)
+            self.agents[i].pos = 600, 300
+            self.agents[i].size = dp(200), dp(200)
 
     def update(self, dt):
         # print(client.time_to_end())
