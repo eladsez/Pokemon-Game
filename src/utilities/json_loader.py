@@ -11,7 +11,8 @@ def agents_loader(json_format: str) -> List[Agent]:
     pos = None
     for agent in json_dict["Agents"][0].values():
         pos = agent["pos"].split(",")
-        curr_agent = Agent(agent["id"], (pos[0], pos[1]), agent["src"], agent["dest"], agent["speed"], agent["value"])
+        curr_agent = Agent(int(agent["id"]), (float(pos[0]), float(pos[1])), int(agent["src"]), int(agent["dest"]),
+                           int(agent["speed"]), float(agent["value"]))
         agents_list.append(curr_agent)
     return agents_list
 
@@ -23,7 +24,8 @@ def pokemons_loader(json_format: str) -> List[Pokemon]:
     pos = None
     for pokemon in json_dict["Pokemons"]:
         pos = pokemon["Pokemon"]["pos"].split(",")
-        curr_pokemon = Pokemon(pokemon["Pokemon"]["value"], pokemon["Pokemon"]["type"], (float(pos[0]), float(pos[1])))
+        curr_pokemon = Pokemon(float(pokemon["Pokemon"]["value"]), int(pokemon["Pokemon"]["type"]),
+                               (float(pos[0]), float(pos[1])))
         pokemons_list.append(curr_pokemon)
     return pokemons_list
 

@@ -70,9 +70,9 @@ def my_scale(data, x=False, y=False):
 radius = 15
 
 client.add_agent("{\"id\":0}")
-# client.add_agent("{\"id\":1}")
-# client.add_agent("{\"id\":2}")
-# client.add_agent("{\"id\":3}")
+client.add_agent("{\"id\":1}")
+client.add_agent("{\"id\":2}")
+client.add_agent("{\"id\":3}")
 
 # this commnad starts the server - the game is running now
 client.start()
