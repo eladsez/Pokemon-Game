@@ -1,4 +1,5 @@
 import sys
+import time
 from random import randrange
 
 from kivy.config import Config
@@ -8,7 +9,7 @@ from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
 
 from client_python.client import Client
-from utilities.json_loader import agents_loader, pokemons_loader
+from utilities.json_loader import agents_loader, pokemons_loader, info_loader
 
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
@@ -29,9 +30,8 @@ HOST = '127.0.0.1'
 
 client = Client()
 client.start_connection(HOST, PORT)
-pokemons_str = client.get_pokemons()
 graph_str = client.get_graph()
-# agents_str = client.get_agents()
+# print(client.get_info())
 
 
 class Arena(RelativeLayout):
@@ -46,34 +46,34 @@ class Arena(RelativeLayout):
     time_to_end_txt = StringProperty()
     moves_txt = StringProperty()
 
+    move_count = 0
+
     state_game_over = False
     state_game_has_started = False
 
     sound_begin = None
     sound_music1 = None
     sound_restart = None
-    t = 0
-    s = 0
 
     def __init__(self, **kwargs):
         super(Arena, self).__init__(**kwargs)
 
         self.algo = GraphAlgo()
-
         self.agents_obj = []  # List
         self.agents = []  # List
-        self.pokemons_obj = pokemons_loader(pokemons_str)  # List of objects
+        self.pokemons_obj = pokemons_loader(client.get_pokemons())  # List of objects
         self.pokemons = []  # list of ellipse to draw
-        # print(pokemons_str)
-        client.add_agent("{\"id\":0}")
-        # client.add_agent("{\"id\":1}")
-        # client.add_agent("{\"id\":2}")
-        # client.add_agent("{\"id\":3}")
-        print(client.get_agents())
-        self.agents_obj = agents_loader(client.get_agents())
-        print(self.agents_obj)
 
-        self.algo.load_from_json("../../data/A3")
+        self.info = info_loader(client.get_info())
+
+        # adding agents
+        for i in range(0, self.info.num_of_agents):
+            agents_to_add = '{"id":' + f'{i}' + '}'
+            client.add_agent(agents_to_add)
+
+        self.agents_obj = agents_loader(client.get_agents())
+
+        self.algo.load_from_json("../../data/A2")
 
         self.k_nodes = []
         self.k_edges = []
@@ -155,13 +155,10 @@ class Arena(RelativeLayout):
                 self.agents.append(Ellipse(source='../../resources/images/ash.png'))
 
     def update_pokemons(self):
-        px = self.pokemons_obj[0].pos[0]
-        py = self.pokemons_obj[0].pos[1]
         self.scale_points()
         for i in range(0, len(self.pokemons_obj)):
             px = self.pokemons_obj[i].pos[0]
             py = self.pokemons_obj[i].pos[1]
-            # print(f'x={float(self.pokemons[i].pos[0])}, y={float(self.pokemons[i].pos[1])}')
             x, y = (px - self.min_x) * self.unit_x, (
                     py - self.min_y) * self.unit_y
 
@@ -169,13 +166,14 @@ class Arena(RelativeLayout):
             self.pokemons[i].size = dp(30), dp(30)
 
     def update_agents(self):
-        px = self.agents_obj[0].pos[0]
-        py = self.agents_obj[0].pos[1]
         self.scale_points()
         for i in range(0, len(self.agents_obj)):
+            px = self.agents_obj[i].pos[0]
+            py = self.agents_obj[i].pos[1]
             x, y = (px - self.min_x) * self.unit_x, (
                     py - self.min_y) * self.unit_y
-            self.agents[i].pos = 600, 300
+
+            self.agents[i].pos = x, y
             self.agents[i].size = dp(40), dp(40)
 
     def update(self, dt):
@@ -186,15 +184,21 @@ class Arena(RelativeLayout):
         self.update_agents()
 
         if not self.state_game_over and self.state_game_has_started:
-            # self.update_agents()
-            # self.update_pokemons()
-            self.t += 1
+            self.choose_move()
+            self.pokemons_obj = pokemons_loader(client.get_pokemons())
+            self.agents_obj = agents_loader(client.get_agents())
+            self.update_agents()
+            self.update_pokemons()
+            self.info = info_loader(client.get_info())
             self.time_to_end_txt = f"TIME:{str(int(int(client.time_to_end())/1000))}"
-            self.score_txt = f"SCORE: {str(self.s)}"
-            self.moves_txt = f"MOVES: {str(0)}"
+            self.score_txt = f"SCORE: {str(self.info.grade)}"
+            self.moves_txt = f"MOVES: {str(self.info.moves)}"
+            self.move_count += 1
+            if self.move_count > 15:
+                client.move()
+                self.move_count = 0
 
         if self.state_game_over:
-            self.t = 0
             self.sb.disabled = True
             self.state_game_has_started = False
             self.state_game_over = True
@@ -202,7 +206,14 @@ class Arena(RelativeLayout):
             self.login_button_title = "RESTART"
             self.login_widget.opacity = 1
             self.sound_music1.stop()
-            client.stop_connection()
+            # client.stop_connection()
+
+    def choose_move(self):
+        for agent in self.agents_obj:
+            if agent.dest == -1:
+                next_node = (agent.src - 1) % len(self.algo.graph.nodes)
+                client.choose_next_edge(
+                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
     def on_login_button_pressed(self, name, case):
         self.name_input = name

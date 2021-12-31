@@ -1,5 +1,6 @@
 import json
 from Logic.agent import Agent
+from Logic.info import Info
 from Logic.pokemon import Pokemon
 from typing import List
 
@@ -9,10 +10,10 @@ def agents_loader(json_format: str) -> List[Agent]:
     json_dict = json.loads(json_format)
     curr_agent = None
     pos = None
-    for agent in json_dict["Agents"][0].values():
-        pos = agent["pos"].split(",")
-        curr_agent = Agent(int(agent["id"]), (float(pos[0]), float(pos[1])), int(agent["src"]), int(agent["dest"]),
-                           int(agent["speed"]), float(agent["value"]))
+    for agent in json_dict["Agents"]:
+        pos = agent["Agent"]["pos"].split(",")
+        curr_agent = Agent(int(agent["Agent"]["id"]), (float(pos[0]), float(pos[1])), int(agent["Agent"]["src"]),
+                           int(agent["Agent"]["dest"]), int(agent["Agent"]["speed"]), float(agent["Agent"]["value"]))
         agents_list.append(curr_agent)
     return agents_list
 
@@ -30,37 +31,31 @@ def pokemons_loader(json_format: str) -> List[Pokemon]:
     return pokemons_list
 
 
+# def graph_loader(json_format: str) -> Digraph:
+#     pass
+
+def info_loader(json_format: str) -> Info:
+    json_dict = json.loads(json_format)
+    info = None
+    for item in json_dict.values():
+        info = Info(int(item["pokemons"]), bool(item["is_logged_in"]), int(item["moves"]), int(item["grade"]),
+                    int(item["game_level"]),
+                    int(item["max_user_level"]), int(item["id"]), item["graph"], int(item["agents"]))
+    return info
+
+
 if __name__ == '__main__':
-    list = pokemons_loader("""{
-        "Pokemons":[
-            {
-                "Pokemon":{
-                "value":5.0,
-                "type":-1,
-                "pos":"35.20392770907119,32.10833067124629,0.0"
-                }
-            },
-            {
-                "Pokemon":{
-                "value":8.0,
-                "type":-1,
-                "pos":"35.20622459040522,32.101281022067994,0.0"
-                }
-            },
-            {
-                "Pokemon":{
-                "value":13.0,
-                "type":-1,
-                "pos":"35.21233170626735,32.10466952803471,0.0"
-                }
-            },
-            {
-                "Pokemon":{
-                "value":5.0,
-                "type":-1,
-                "pos":"35.21200574506042,32.105721621191464,0.0"
-                }
+    info = info_loader("""{
+            "GameServer":{
+                "pokemons":1,
+                "is_logged_in":false,
+                "moves":1,
+                "grade":0,
+                "game_level":0,
+                "max_user_level":-1,
+                "id":0,
+                "graph":"data/A0",
+                "agents":1
             }
-            ]
         }""")
-    print(list)
+    print(info)
