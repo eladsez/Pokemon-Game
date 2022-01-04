@@ -8,6 +8,7 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
 
+from Logic.computation import compute_next_node
 from client_python.client import Client
 from utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
 
@@ -18,7 +19,6 @@ from kivy.app import App
 from kivy.graphics import Line, Ellipse
 from kivy.graphics.context_instructions import Color
 from kivy.properties import Clock, StringProperty
-
 from Logic.GraphAlgo import GraphAlgo
 
 Builder.load_file('login.kv')
@@ -31,6 +31,8 @@ HOST = '127.0.0.1'
 client = Client()
 client.start_connection(HOST, PORT)
 graph_str = client.get_graph()
+
+
 # print(client.get_info())
 
 
@@ -48,6 +50,7 @@ class Arena(RelativeLayout):
 
     move_count = 0
 
+    total_game_time = time_to_end/1000
     state_game_over = False
     state_game_has_started = False
 
@@ -59,10 +62,14 @@ class Arena(RelativeLayout):
         super(Arena, self).__init__(**kwargs)
 
         self.algo = GraphAlgo()
+        self.algo.graph = graph_loader(client.get_graph())
         self.agents_obj = []  # List
         self.agents = []  # List
         self.pokemons_obj = pokemons_loader(client.get_pokemons())  # List of objects
         self.pokemons = []  # list of ellipse to draw
+
+        for pok in self.pokemons_obj:
+            pok.which_edge(self.algo.graph)
 
         self.info = info_loader(client.get_info())
 
@@ -74,8 +81,6 @@ class Arena(RelativeLayout):
         self.agents_obj = agents_loader(client.get_agents())
 
         # self.algo.load_from_json("../../data/A2")
-        self.algo.graph = graph_loader(client.get_graph())
-
         self.k_nodes = []
         self.k_edges = []
 
@@ -93,9 +98,9 @@ class Arena(RelativeLayout):
         self.sound_music1 = SoundLoader.load("../../resources/audio/theme.mp3")
         self.sound_restart = SoundLoader.load("../../resources/audio/restart.wav")
 
-        self.sound_begin.volume = .7
-        self.sound_music1.volume = .3
-        self.sound_restart.volume = .6
+        self.sound_begin.volume = .0
+        self.sound_music1.volume = .0
+        self.sound_restart.volume = .0
 
     def scale_points(self):
         self.min_x = self.min_y = sys.float_info.max
@@ -185,21 +190,27 @@ class Arena(RelativeLayout):
         self.update_agents()
 
         if not self.state_game_over and self.state_game_has_started:
+
             self.choose_move()
+            self.old_pokemons_obj = self.pokemons_obj
             self.pokemons_obj = pokemons_loader(client.get_pokemons())
+            for pok in self.pokemons_obj:
+                pok.which_edge(self.algo.graph)
+                for old_pok in self.old_pokemons_obj:
+                     if old_pok == pok: pok.sold == old_pok.sold
+
+
             self.agents_obj = agents_loader(client.get_agents())
             self.update_agents()
             self.update_pokemons()
             self.info = info_loader(client.get_info())
-            self.time_to_end_txt = f"TIME:{str(int(int(client.time_to_end())/1000))}"
+            self.time_to_end_txt = f"TIME:{str(int(int(client.time_to_end()) / 1000))}"
             self.score_txt = f"SCORE: {str(self.info.grade)}"
             self.moves_txt = f"MOVES: {str(self.info.moves)}"
             self.move_count += 1
-            if self.move_count > 15:
+            if self.move_count > 5:
                 client.move()
                 self.move_count = 0
-
-            print(self.agents_obj[0].speed)
 
         if self.state_game_over:
             self.sb.disabled = True
@@ -214,7 +225,10 @@ class Arena(RelativeLayout):
     def choose_move(self):
         for agent in self.agents_obj:
             if agent.dest == -1:
-                next_node = (agent.src - 1) % len(self.algo.graph.nodes)
+                # next_node = (agent.src - 1) % len(self.algo.graph.nodes)
+                next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
+                print(agent.src)
+                print(next_node)
                 client.choose_next_edge(
                     '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
