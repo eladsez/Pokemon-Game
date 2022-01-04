@@ -5,7 +5,7 @@ from typing import List
 from Logic.DiGraph import DiGraph
 from queue import Queue
 from Logic.Node import Node
-from Utilities.PriorityQueue import PriorityQueue
+from utilities.PriorityQueue import PriorityQueue
 # from GUI.PlotGraph import PlotView
 
 
