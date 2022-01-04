@@ -1,8 +1,10 @@
 import json
+from Logic.DiGraph import DiGraph
 from Logic.agent import Agent
 from Logic.info import Info
 from Logic.pokemon import Pokemon
 from typing import List
+
 
 
 def agents_loader(json_format: str) -> List[Agent]:
@@ -31,8 +33,15 @@ def pokemons_loader(json_format: str) -> List[Pokemon]:
     return pokemons_list
 
 
-# def graph_loader(json_format: str) -> Digraph:
-#     pass
+def graph_loader(json_format: str) -> DiGraph:
+    graph_dict = json.loads(json_format)
+    graph = DiGraph()
+    for node in graph_dict["Nodes"]:
+        pos = tuple(node["pos"].split(","))
+        graph.add_node(int(node["id"]), (float(pos[0]), float(pos[1])))
+    for edge in graph_dict["Edges"]:
+        graph.add_edge(int(edge["src"]), int(edge["dest"]), float(edge["w"]))
+    return graph
 
 def info_loader(json_format: str) -> Info:
     json_dict = json.loads(json_format)
@@ -45,17 +54,32 @@ def info_loader(json_format: str) -> Info:
 
 
 if __name__ == '__main__':
-    info = info_loader("""{
-            "GameServer":{
-                "pokemons":1,
-                "is_logged_in":false,
-                "moves":1,
-                "grade":0,
-                "game_level":0,
-                "max_user_level":-1,
-                "id":0,
-                "graph":"data/A0",
-                "agents":1
-            }
+    info = graph_loader("""{
+            "Edges":[
+                {
+                    "src":0,
+                    "w":1.4004465106761335,
+                    "dest":1
+                },
+                {
+                    "src":0,
+                    "w":1.4620268165085584,
+                    "dest":10
+                }
+            ],
+            "Nodes":[
+                {
+                    "pos":"35.18753053591606,32.10378225882353,0.0",
+                    "id":0
+                },
+                {
+                    "pos":"35.18958953510896,32.10785303529412,0.0",
+                    "id":1
+                },
+                {
+                    "pos":"35.19341035835351,32.10610841680672,0.0",
+                    "id":10
+                }
+            ]
         }""")
     print(info)

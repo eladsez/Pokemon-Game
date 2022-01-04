@@ -9,12 +9,6 @@ class Agent:
         self.speed = speed
         self.value = value
 
-    def move(self):
-        pass
-
-    def catch(self):
-        pass
-
     def __repr__(self) -> str:
         return f"id:{self.id}, pos:{self.pos}, src:{self.src}, dest:{self.dest}, speed:{self.speed}, value:{self.value}"
 

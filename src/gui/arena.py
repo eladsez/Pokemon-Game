@@ -9,7 +9,7 @@ from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
 
 from client_python.client import Client
-from utilities.json_loader import agents_loader, pokemons_loader, info_loader
+from utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
 
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
@@ -73,7 +73,8 @@ class Arena(RelativeLayout):
 
         self.agents_obj = agents_loader(client.get_agents())
 
-        self.algo.load_from_json("../../data/A2")
+        # self.algo.load_from_json("../../data/A2")
+        self.algo.graph = graph_loader(client.get_graph())
 
         self.k_nodes = []
         self.k_edges = []
@@ -197,6 +198,8 @@ class Arena(RelativeLayout):
             if self.move_count > 15:
                 client.move()
                 self.move_count = 0
+
+            print(self.agents_obj[0].speed)
 
         if self.state_game_over:
             self.sb.disabled = True
