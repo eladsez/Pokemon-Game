@@ -10,8 +10,6 @@ from typing import List
 def agents_loader(json_format: str) -> List[Agent]:
     agents_list = []
     json_dict = json.loads(json_format)
-    curr_agent = None
-    pos = None
     for agent in json_dict["Agents"]:
         pos = agent["Agent"]["pos"].split(",")
         curr_agent = Agent(int(agent["Agent"]["id"]), (float(pos[0]), float(pos[1])), int(agent["Agent"]["src"]),
@@ -23,8 +21,6 @@ def agents_loader(json_format: str) -> List[Agent]:
 def pokemons_loader(json_format: str) -> List[Pokemon]:
     pokemons_list = []
     json_dict = json.loads(json_format)
-    curr_pokemon = None
-    pos = None
     for pokemon in json_dict["Pokemons"]:
         pos = pokemon["Pokemon"]["pos"].split(",")
         curr_pokemon = Pokemon(float(pokemon["Pokemon"]["value"]), int(pokemon["Pokemon"]["type"]),
