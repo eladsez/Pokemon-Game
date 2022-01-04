@@ -1,11 +1,11 @@
-from API.GraphAlgoInterface import GraphAlgoInterface
+from Graph_API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
 from Logic.DiGraph import DiGraph
 from queue import Queue
 from Logic.Node import Node
-from utilities.PriorityQueue import PriorityQueue
+from Utilities.PriorityQueue import PriorityQueue
 # from GUI.PlotGraph import PlotView
 
 
@@ -331,7 +331,3 @@ class GraphAlgo(GraphAlgoInterface):
     #     self.plot.update_scale()
     #     self.plot.draw_graph()
 
-
-if __name__ == '__main__':
-    algo = GraphAlgo()
-    algo.load_from_json("../../../data/A5.json")

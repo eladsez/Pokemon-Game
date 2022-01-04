@@ -1,7 +1,7 @@
 import sys
 
 from Logic.DiGraph import DiGraph
-from utilities.util import Line, dist
+from Utilities.util import Line, dist
 
 
 class Pokemon:
