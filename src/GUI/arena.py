@@ -10,7 +10,7 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from Logic.computation import compute_next_node
 from client_python.client import Client
-from utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
+from Utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
 
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
