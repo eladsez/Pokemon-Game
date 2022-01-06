@@ -47,35 +47,3 @@ def info_loader(json_format: str) -> Info:
                     int(item["game_level"]),
                     int(item["max_user_level"]), int(item["id"]), item["graph"], int(item["agents"]))
     return info
-
-
-if __name__ == '__main__':
-    info = graph_loader("""{
-            "Edges":[
-                {
-                    "src":0,
-                    "w":1.4004465106761335,
-                    "dest":1
-                },
-                {
-                    "src":0,
-                    "w":1.4620268165085584,
-                    "dest":10
-                }
-            ],
-            "Nodes":[
-                {
-                    "pos":"35.18753053591606,32.10378225882353,0.0",
-                    "id":0
-                },
-                {
-                    "pos":"35.18958953510896,32.10785303529412,0.0",
-                    "id":1
-                },
-                {
-                    "pos":"35.19341035835351,32.10610841680672,0.0",
-                    "id":10
-                }
-            ]
-        }""")
-    print(info)

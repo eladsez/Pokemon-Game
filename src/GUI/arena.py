@@ -10,7 +10,7 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from Logic.computation import compute_next_node
 from client_python.client import Client
-from utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
+from Utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
 
 Config.set('graphics', 'width', '1100')
 Config.set('graphics', 'height', '600')
@@ -67,16 +67,31 @@ class Arena(RelativeLayout):
         self.agents = []  # List
         self.pokemons_obj = pokemons_loader(client.get_pokemons())  # List of objects
         self.pokemons = []  # list of ellipse to draw
-
+        self.imageIndex = 0
         for pok in self.pokemons_obj:
             pok.which_edge(self.algo.graph)
+            if self.imageIndex % 2 == 0:
+                pok.image = '../../resources/images/pikachu.png'
+            else:
+                pok.image = '../../resources/images/charizard.png'
+            self.imageIndex += 1
+
 
         self.info = info_loader(client.get_info())
 
         # adding agents
-        for i in range(0, self.info.num_of_agents):
-            agents_to_add = '{"id":' + f'{i}' + '}'
-            client.add_agent(agents_to_add)
+        if (self.info.num_of_pokemones >= self.info.num_of_agents):
+            for i in range(0, self.info.num_of_agents):
+                agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
+                client.add_agent(agents_to_add)
+        else:
+            for i in range(0, self.info.num_of_pokemones):
+                agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
+                client.add_agent(agents_to_add)
+            for i in range(self.info.num_of_agents - self.info.num_of_pokemones -1, self.info.num_of_agents):
+                agents_to_add = '{"id":' + f'{(i + randrange(0, 500, 1)) % self.algo.graph.v_size()}' + '}'
+                client.add_agent(agents_to_add)
+
 
         self.agents_obj = agents_loader(client.get_agents())
 
@@ -147,12 +162,10 @@ class Arena(RelativeLayout):
     def draw_pokemons(self):
         with self.canvas:
             Color(1, 1, 1)
-            for i in range(0, len(self.pokemons_obj)):
+            for pokemon in self.pokemons_obj:
                 # self.pokemons.append(Ellipse())
-                if i % 2 == 0:
-                    self.pokemons.append(Ellipse(source='../../resources/images/pikachu.png'))
-                else:
-                    self.pokemons.append(Ellipse(source='../../resources/images/charizard.png'))
+                self.pokemons.append(Ellipse(source=pokemon.image))
+
 
     def draw_agents(self):
         with self.canvas:
@@ -195,9 +208,20 @@ class Arena(RelativeLayout):
             self.old_pokemons_obj = self.pokemons_obj
             self.pokemons_obj = pokemons_loader(client.get_pokemons())
             for pok in self.pokemons_obj:
+                new_pok = True
                 pok.which_edge(self.algo.graph)
                 for old_pok in self.old_pokemons_obj:
-                    if old_pok == pok: pok.sold == old_pok.sold
+                    if old_pok == pok:
+                        new_pok = False
+                        pok.sold = old_pok.sold
+                        pok.image = old_pok.image
+                if new_pok:
+                    if self.imageIndex % 2 == 0:
+                        pok.image = '../../resources/images/pikachu.png'
+                    else:
+                        pok.image = '../../resources/images/charizard.png'
+                    self.imageIndex += 1
+
 
             self.agents_obj = agents_loader(client.get_agents())
             self.update_agents()
@@ -224,13 +248,9 @@ class Arena(RelativeLayout):
 
     def choose_move(self):
         for agent in self.agents_obj:
-            if agent.dest == -1:
-                # next_node = (agent.src - 1) % len(self.algo.graph.nodes)
-                next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
-                print(agent.src)
-                print(next_node)
-                if agent.dest == -1:
-                    client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+            # if agent.dest == -1:
+            next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
+            client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
     def on_login_button_pressed(self, ID):
         self.ID = ID

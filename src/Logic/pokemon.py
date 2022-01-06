@@ -3,7 +3,7 @@ import sys
 import numpy as np
 
 from Logic.DiGraph import DiGraph
-from utilities.util import Line, dist
+from Utilities.util import Line, dist
 
 
 class Pokemon:
@@ -13,6 +13,7 @@ class Pokemon:
         self.pos = pos
         self.on_edge = on_edge  # the edge the pokemon is on
         self.sold = False
+        self.image = None
 
     def which_edge(self, graph: DiGraph):
         min_dist = sys.float_info.max
