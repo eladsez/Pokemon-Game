@@ -183,7 +183,7 @@ class Arena(RelativeLayout):
             self.agents[i].size = dp(40), dp(40)
 
     def update(self, dt):
-        # time_factor = dt * 60
+        time_factor = dt * 60
         self.update_nodes()
         self.update_edges()
         self.update_pokemons()
