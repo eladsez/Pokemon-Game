@@ -11,18 +11,20 @@
         pos_hint: {"center_x": .5, "center_y": .8}
 
     TextInput:
-        id: name
+        id: ID
         pos_hint: {"center_x": .5, "center_y": .55}
-        size_hint: .25, .07
-        text: "name"
+        size_hint: .25, .05
+        hint_text: "Enter ID"
         multiline: False
+        focus: True
+        on_text_validate: root.parent.on_login_button_pressed(ID.text)
 
-    TextInput:
-        id: case
-        pos_hint: {"center_x": .5, "center_y": .45}
-        size_hint: .25, .07
-        text: "case"
-        multiline: False
+   # TextInput:
+    #    id: case
+     #   pos_hint: {"center_x": .5, "center_y": .45}
+      #  size_hint: .25, .07
+       # text: "case"
+        #multiline: False
 
 
     Button:
@@ -32,6 +34,6 @@
         text: root.parent.login_button_title
         pos_hint: {"center_x": .5, "center_y": .2}
         size_hint: .17, .1
-        on_release: root.parent.on_login_button_pressed(name.text, case.text)
+        on_release: root.parent.on_login_button_pressed(ID.text)
         background_normal: ''
         background_color: .4, .3, 1, .85

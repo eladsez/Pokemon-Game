@@ -40,8 +40,8 @@ class Arena(RelativeLayout):
     login_title = StringProperty("Login")
     login_button_title = StringProperty("Login")
 
-    name_input = None
-    case_input = None
+    ID = None
+    # case_input = None
     time_to_end = int(client.time_to_end())
 
     score_txt = StringProperty()
@@ -189,7 +189,7 @@ class Arena(RelativeLayout):
         self.update_pokemons()
         self.update_agents()
 
-        if not self.state_game_over and self.state_game_has_started:
+        if not self.state_game_over and self.state_game_has_started and client.is_running():
 
             self.choose_move()
             self.old_pokemons_obj = self.pokemons_obj
@@ -215,11 +215,12 @@ class Arena(RelativeLayout):
         if self.state_game_over:
             self.sb.disabled = True
             self.state_game_has_started = False
-            self.state_game_over = True
-            self.login_title = "D O N E"
-            self.login_button_title = "RESTART"
+            # self.state_game_over = True
+            # self.login_title = "D O N E"
+            # self.login_button_title = "RESTART"
             self.login_widget.opacity = 1
             self.sound_music1.stop()
+            # client.stop()
             # client.stop_connection()
 
     def choose_move(self):
@@ -232,13 +233,15 @@ class Arena(RelativeLayout):
                 client.choose_next_edge(
                     '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
-    def on_login_button_pressed(self, name, case):
-        self.name_input = name
-        self.case_input = case
-        print(self.name_input)
-        print(self.case_input)
+    def on_login_button_pressed(self, ID):
+        self.ID = ID
+        # self.case_input = case
+        print(self.ID)
+        # print(self.case_input)
         self.sb = self.ids.stop_button
         self.sb.disabled = True
+        if ID != "":
+            client.log_in(self.ID)
         client.start()
 
         if self.state_game_over:
@@ -259,6 +262,12 @@ class Arena(RelativeLayout):
 
     def on_stop_button_pressed(self):
         self.state_game_over = True
+        self.sb.disabled = True
+        self.state_game_has_started = False
+        self.login_widget.opacity = 1
+        self.sound_music1.stop()
+        client.stop_connection()
+        sys.exit()
 
 
 class PokemonApp(App):
