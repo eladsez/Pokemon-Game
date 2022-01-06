@@ -50,7 +50,7 @@ class Arena(RelativeLayout):
 
     move_count = 0
 
-    total_game_time = time_to_end/1000
+    total_game_time = time_to_end / 1000
     state_game_over = False
     state_game_has_started = False
 
@@ -197,8 +197,7 @@ class Arena(RelativeLayout):
             for pok in self.pokemons_obj:
                 pok.which_edge(self.algo.graph)
                 for old_pok in self.old_pokemons_obj:
-                     if old_pok == pok: pok.sold == old_pok.sold
-
+                    if old_pok == pok: pok.sold == old_pok.sold
 
             self.agents_obj = agents_loader(client.get_agents())
             self.update_agents()
@@ -230,8 +229,8 @@ class Arena(RelativeLayout):
                 next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
                 print(agent.src)
                 print(next_node)
-                client.choose_next_edge(
-                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                if agent.dest == -1:
+                    client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
     def on_login_button_pressed(self, ID):
         self.ID = ID
