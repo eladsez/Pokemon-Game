@@ -1,5 +1,5 @@
+
 import sys
-import time
 from random import randrange
 
 from kivy.config import Config
@@ -7,8 +7,8 @@ from kivy.core.audio import SoundLoader
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.relativelayout import RelativeLayout
-
 from Logic.computation import compute_next_node
+from Logic.pokemon import pok_list_deep_copy
 from client_python.client import Client
 from Utilities.json_loader import agents_loader, pokemons_loader, info_loader, graph_loader
 
@@ -60,7 +60,7 @@ class Arena(RelativeLayout):
 
     def __init__(self, **kwargs):
         super(Arena, self).__init__(**kwargs)
-
+        self.imageIndex = 0
         self.algo = GraphAlgo()
         self.algo.graph = graph_loader(client.get_graph())
         self.agents_obj = []  # List
@@ -70,17 +70,34 @@ class Arena(RelativeLayout):
 
         for pok in self.pokemons_obj:
             pok.which_edge(self.algo.graph)
+            if self.imageIndex % 2 == 0:
+                if pok.type > 0:
+                    pok.image = '../../resources/images/charizard.png'
+                else:
+                    pok.image = '../../resources/images/charizard_mirrored.png'
+            else:
+                if pok.type > 0:
+                    pok.image = '../../resources/images/pikachu.png'
+                else:
+                    pok.image = '../../resources/images/pikachu_mirrored.png'
+            self.imageIndex += 1
 
         self.info = info_loader(client.get_info())
 
-        # adding agents
-        for i in range(0, self.info.num_of_agents):
-            agents_to_add = '{"id":' + f'{i}' + '}'
-            client.add_agent(agents_to_add)
+        if (self.info.num_of_pokemones >= self.info.num_of_agents):
+            for i in range(0, self.info.num_of_agents):
+                agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
+                client.add_agent(agents_to_add)
+        else:
+            for i in range(0, self.info.num_of_pokemones):
+                agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
+                client.add_agent(agents_to_add)
+            for i in range(self.info.num_of_agents - self.info.num_of_pokemones -1, self.info.num_of_agents):
+                agents_to_add = '{"id":' + f'{(i + randrange(0, 500, 1)) % self.algo.graph.v_size()}' + '}'
+                client.add_agent(agents_to_add)
 
         self.agents_obj = agents_loader(client.get_agents())
 
-        # self.algo.load_from_json("../../data/A2")
         self.k_nodes = []
         self.k_edges = []
 
@@ -147,12 +164,9 @@ class Arena(RelativeLayout):
     def draw_pokemons(self):
         with self.canvas:
             Color(1, 1, 1)
-            for i in range(0, len(self.pokemons_obj)):
-                # self.pokemons.append(Ellipse())
-                if i % 2 == 0:
-                    self.pokemons.append(Ellipse(source='../../resources/images/pikachu.png'))
-                else:
-                    self.pokemons.append(Ellipse(source='../../resources/images/charizard.png'))
+            for pok in self.pokemons_obj:
+                self.pokemons.append(Ellipse(source=pok.image))
+
 
     def draw_agents(self):
         with self.canvas:
@@ -170,6 +184,7 @@ class Arena(RelativeLayout):
 
             self.pokemons[i].pos = x, y
             self.pokemons[i].size = dp(30), dp(30)
+            self.pokemons[i].source = self.pokemons_obj[i].image
 
     def update_agents(self):
         self.scale_points()
@@ -192,12 +207,31 @@ class Arena(RelativeLayout):
         if not self.state_game_over and self.state_game_has_started and client.is_running():
 
             self.choose_move()
-            self.old_pokemons_obj = self.pokemons_obj
-            self.pokemons_obj = pokemons_loader(client.get_pokemons())
-            for pok in self.pokemons_obj:
-                pok.which_edge(self.algo.graph)
-                for old_pok in self.old_pokemons_obj:
-                    if old_pok == pok: pok.sold == old_pok.sold
+
+            new_pokemons_obj = pokemons_loader(client.get_pokemons())
+            for pok in new_pokemons_obj:
+                new_pok = True
+                for old_pok in self.pokemons_obj:
+                    if pok == old_pok:
+                        new_pok = False
+                        pok.sold = old_pok.sold
+                        pok.image = old_pok.image
+                        pok.on_edge = old_pok.on_edge
+                if new_pok:
+                    pok.which_edge(self.algo.graph)
+                    if self.imageIndex % 2 == 0:
+                        if pok.type > 0:
+                            pok.image = '../../resources/images/charizard.png'
+                        else:
+                            pok.image = '../../resources/images/charizard_mirrored.png'
+                    else:
+                        if pok.type > 0:
+                            pok.image = '../../resources/images/pikachu.png'
+                        else:
+                            pok.image = '../../resources/images/pikachu_mirrored.png'
+                    self.imageIndex += 1
+            self.pokemons_obj = pok_list_deep_copy(new_pokemons_obj)
+
 
             self.agents_obj = agents_loader(client.get_agents())
             self.update_agents()
