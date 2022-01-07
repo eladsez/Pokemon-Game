@@ -227,10 +227,7 @@ class Arena(RelativeLayout):
             if agent.dest == -1:
                 # next_node = (agent.src - 1) % len(self.algo.graph.nodes)
                 next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
-                print(agent.src)
-                print(next_node)
-                if agent.dest == -1:
-                    client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
     def on_login_button_pressed(self, ID):
         self.ID = ID
