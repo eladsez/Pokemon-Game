@@ -13,6 +13,7 @@ class Pokemon:
         self.pos = pos
         self.on_edge = on_edge  # the edge the pokemon is on
         self.sold = False
+        self.image = None
 
     def which_edge(self, graph: DiGraph):
         min_dist = sys.float_info.max
