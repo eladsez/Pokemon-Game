@@ -25,5 +25,6 @@ def compute_next_node(pokemons: List[Pokemon], algo: GraphAlgo, agent: Agent) ->
                 min_dist = curr_dist
                 next_node = path[1]
                 chosen_pok = pokemon
-    chosen_pok.sold = True
+    if chosen_pok is not None:
+       chosen_pok.sold = True
     return next_node
