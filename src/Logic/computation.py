@@ -15,7 +15,7 @@ def compute_next_node(pokemons: List[Pokemon], algo: GraphAlgo, agent: Agent) ->
         dijkstra_src_node = agent.src
 
     for pokemon in pokemons:
-        if pokemon.sold: continue
+        if pokemon.sold or pokemon.pos == (35.187712465463996, 32.10386004178916): continue
         if dijkstra_src_node == pokemon.on_edge[0]:
             return pokemon.on_edge[1]  # the agent is already on the pokemon src node need to go to his dest
         else:

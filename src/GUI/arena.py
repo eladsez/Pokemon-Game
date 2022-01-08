@@ -237,7 +237,8 @@ class Arena(RelativeLayout):
             self.update_agents()
             self.update_pokemons()
             self.info = info_loader(client.get_info())
-            self.time_to_end_txt = f"TIME:{str(int(int(client.time_to_end()) / 1000))}"
+            some = str(int(int(client.time_to_end()) / 1000))
+            self.time_to_end_txt = f"TIME:{some}"
             self.score_txt = f"SCORE: {str(self.info.grade)}"
             self.moves_txt = f"MOVES: {str(self.info.moves)}"
             self.move_count += 1
