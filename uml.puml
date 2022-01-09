@@ -1,0 +1,159 @@
+@startuml
+!theme reddress-darkblue
+class GraphAlgo
+class DiGraph
+class Node
+class Pokemon
+class Agent
+class Info
+
+class Client
+class computation
+class Arena
+
+class Node{
+- id : int
+- pos : tuple
+- edges_in : dict
+- edges_out : dict
+
++ get_id()
++ get_pos()
++ add_edge_in()
++ add_edge_out()
++ node_dict()
++ all_edges_out_dict()
++ all_edges_int_dict()
++ __eq__()
+
+}
+
+class DiGraph{
+- nodes : dict
+- MC : int
+- edge_size : int
+
++ v_size()
++ e_size()
++ get_all_v()
++ all_in_edges_of_node()
++ all_out_edges_of_node()
++ get_mc()
++ add_edge()
++ add_node()
++ remove_node()
++ remove_edge()
+}
+
+class GraphAlgo{
+- graph : DiGraph
+
++ get_graph()
++ load_from_json()
++ shortest_path()
+
+}
+
+
+class Pokemon{
+- value : int
+- type : int
+- pos : GeoLocation
+- on_edge : (src, dst)
+- sold : bool
+- image : str
+
++ which_edge()
++ pok_list_deep_copy()
++ __eq__()
+}
+
+class Agent{
+- id : int
+- pos : GeoLocation
+- src : int
+- dest : int
+- speed : int
+- value : int
+
++ __repr__()
+}
+
+class Info{
+- num_of_pokemones : int
+- is_logged_in : bool
+- moves : int
+- grade : int
+- game_level : int
+- max_user_level : int
+- id : int
+- graph : str
+- num_of_agents : int
+
++ __repr__()
+}
+
+class Client{
+- MSGLEN = 10000
+
++ start_connection()
++ __send_message()
++ get_agents()
++ add_agent()
++ get_graph()
++ get_info()
++ get_pokemon()
++ is_running()
++ time_to_end()
++ start()
++ stop()
++ move()
++ choose_next_edge()
++ log_in()
++ stop_connection()
+
+}
+
+
+class computation{
++ compute_next_node()
+}
+
+
+class Arena{
+- PORT = 6666
+- HOST = 127.0.0.1
+- client : Client
+- graph_algo : GraphAlgo
+- pokemons
+- info
+- agents : list
+- start_time : int
++ init()
++ scale_points()
++ draw_edges()
++ draw_nodes()
++ update_edges()
++ update_nodes()
++ draw_agents()
++ draw_pokemons()
++ update_agents()
++ update_pokemons()
++ update()
++ choose_move()
++ on_login_button_pressed()
++ on_stop_button_pressed()
+}
+
+Arena <-- computation
+Arena <- Client
+Arena <- Pokemon
+Arena <- Agent
+Arena <- Info
+Arena <-- GraphAlgo
+computation <- GraphAlgo
+
+DiGraph <- Node
+GraphAlgo <- DiGraph
+
+@enduml
