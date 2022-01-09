@@ -24,7 +24,15 @@ we had to consider principles like S.O.L.I.D and MVC, and strive towards them in
 In this assignment we've used the Kivy library for the Gui, and our last assignment for the graphs logic and algorithms.  
 
 ### dependencies
-* [Kivy](https://github.com/kivy/kivy)
+* [Kivy](https://github.com/kivy/kivy)  
+
+
+### Screenshots
+![l](https://user-images.githubusercontent.com/66886354/148672687-062d8797-cead-462e-b3a3-f334469417b3.png)
+![0](https://user-images.githubusercontent.com/66886354/148672693-a1d88e37-ca86-4b00-a246-203fbf71805d.png)
+![11](https://user-images.githubusercontent.com/66886354/148672697-a5010cc3-018c-48a5-b47e-9d8fc41828a7.png)
+
+
 
 ## How To Run
 In order to run this program do the following:
