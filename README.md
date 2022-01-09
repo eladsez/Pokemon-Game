@@ -79,7 +79,11 @@ java -jar Ex4_Server_v0.0.jar <caseNum(0 - 15)>
 
 ```
 python3 arena.py
-```  
+```   
+
+### UML
+![Ex4UML](https://user-images.githubusercontent.com/66886354/148679839-9b3b6bb9-b804-4d49-8832-0816e26e7746.png)
+
 
 ### More Information
 - About Directed, Weighted, and Directed + Weighted graphs: http://math.oxford.emory.edu/site/cs171/directedAndEdgeWeightedGraphs/
