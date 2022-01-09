@@ -2,8 +2,9 @@
 
 > Made by [Elad Seznayev](https://github.com/eladsez) and [Nerya Bigon](https://github.com/nerya0001).
 
-* Object-Oriented Programming & Design  
+* Object-Oriented Programming & Design    
 
+* if you only interested to run it [click here](https://github.com/nerya0001/Ex4#how-to-run)
 
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/66886354/148678253-33655ea8-e077-4d0f-aa84-3e8548692256.gif)
 
