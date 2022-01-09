@@ -84,7 +84,7 @@ class Arena(RelativeLayout):
 
         self.info = info_loader(client.get_info())
 
-        if (self.info.num_of_pokemones >= self.info.num_of_agents):
+        if self.info.num_of_pokemones >= self.info.num_of_agents:
             for i in range(0, self.info.num_of_agents):
                 agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
                 client.add_agent(agents_to_add)
@@ -92,7 +92,7 @@ class Arena(RelativeLayout):
             for i in range(0, self.info.num_of_pokemones):
                 agents_to_add = '{"id":' + f'{self.pokemons_obj[i].on_edge[0]}' + '}'
                 client.add_agent(agents_to_add)
-            for i in range(self.info.num_of_agents - self.info.num_of_pokemones -1, self.info.num_of_agents):
+            for i in range(self.info.num_of_agents - self.info.num_of_pokemones - 1, self.info.num_of_agents):
                 agents_to_add = '{"id":' + f'{(i + randrange(0, 500, 1)) % self.algo.graph.v_size()}' + '}'
                 client.add_agent(agents_to_add)
 
@@ -148,7 +148,6 @@ class Arena(RelativeLayout):
         self.scale_points()
         for i, node in enumerate(self.algo.graph.nodes.values()):
             x, y = (node.pos[0] - self.min_x) * self.unit_x, (node.pos[1] - self.min_y) * self.unit_y
-            # print(f'x={x}, y={y}')
             self.k_nodes[i].pos = x, y
             self.k_nodes[i].size = dp(15), dp(15)
 
@@ -237,7 +236,8 @@ class Arena(RelativeLayout):
             self.update_agents()
             self.update_pokemons()
             self.info = info_loader(client.get_info())
-            self.time_to_end_txt = f"TIME:{str(int(int(client.time_to_end()) / 1000))}"
+            some = str(int(int(client.time_to_end()) / 1000))
+            self.time_to_end_txt = f"TIME:{some}"
             self.score_txt = f"SCORE: {str(self.info.grade)}"
             self.moves_txt = f"MOVES: {str(self.info.moves)}"
             self.move_count += 1
@@ -261,7 +261,8 @@ class Arena(RelativeLayout):
             if agent.dest == -1:
                 # next_node = (agent.src - 1) % len(self.algo.graph.nodes)
                 next_node = compute_next_node(self.pokemons_obj, self.algo, agent)
-                client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                if type(next_node) == int:
+                    client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
 
     def on_login_button_pressed(self, ID):
         self.ID = ID
