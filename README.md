@@ -2,7 +2,13 @@
 
 > Made by [Elad Seznayev](https://github.com/eladsez) and [Nerya Bigon](https://github.com/nerya0001).
 
-* Object-Oriented Programming & Design
+* Object-Oriented Programming & Design  
+
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/66886354/148678253-33655ea8-e077-4d0f-aa84-3e8548692256.gif)
+
+
+
 
 This assignment is part of OOP course assignments,  
 in this assignment we were required to implements all of the knowledge we've learned in this course.  
@@ -22,6 +28,32 @@ the simulation end when the time is up (60 sec - 120 sec).
 we had to consider principles like S.O.L.I.D and MVC, and strive towards them in our project architecture.  
 
 In this assignment we've used the Kivy library for the Gui, and our last assignment for the graphs logic and algorithms.  
+
+
+## The Algorithm:
+  * The simulation logic:
+    1. place agents initially next to the closest pokemons.   
+    2. using Dijkstra's shortest path, find the closest pokemon that wasn't alrady "sold".  
+    3. tell the agent where he needs to go according to step 1, and tag the pokemon as "sold".  
+    4. after the agent captured the pokemon, reapeat step 1.  
+ 
+ 
+  * The graphs logic:  
+    `shortestPath` - return the shortest path between two nodes.  
+    We've implemented the algorithm in the following way:    
+      1. Run DIJKSTRA algorithm on the source node - in order to get in each node the shortest path from the source, and the distance. 
+      2. Because each node tag "carry" the node that came before it in the path, all there is to do is to loop from the destination node and ask who came before until we get to the source node.
+      3. The results are then inserted into a list and returned.  
+
+## Structure
+`Ex4_Server_v0.0.jar` - this is the game server, which drive the simulation.    
+`client` - This class is in charge of communicating with the server.  
+`Arena` - This class is the *"main"* class, in charge of the Gui and calling to the simulation logic.  
+`computation.py`- Here is the main logic function of our project - the function that compute the next node for the agent to go to.    
+`util` - This class contains helper functions for the logic.  
+`DiGraph` - This class represent the graph -> implements the `GraphInterface` interface.  
+`GraphAlgo` - this class holds all of the algorithms -> implements the `GraphAlgoInterface` interface.  
+`Node` - This class represent a node.  
 
 ### dependencies
 * [Kivy](https://github.com/kivy/kivy)  
