@@ -76,7 +76,7 @@ In order to run this program do the following:
 ``` 
 java -jar Ex4_Server_v0.0.jar <caseNum(0 - 15)>
 ```  
-4. run the `arena.py` file by openning a terminal in the `Gui` folder which is in the src folder, and run the following command:  
+4. run the `arena.py` file by openning a second terminal in the `Gui` folder which is in the src folder, and run the following command:  
 
 ```
 python3 arena.py
